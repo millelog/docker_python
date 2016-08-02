@@ -83,7 +83,7 @@ class class_database(object):
 
         def log(self, string):
                 with open("/data/log.txt", "a") as log:
-                        log.write(str(datetime.now())++string)
+                        log.write(str(datetime.now())+string)
 
         def commit_db(self):
                 """commit database changes in info and close the connection"""
