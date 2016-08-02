@@ -42,8 +42,8 @@ class class_database(object):
                 c = self.conn.cursor()
                 #create the port table
                 c.execute('''CREATE TABLE IF NOT EXISTS '{ptn}' (
-                        '{iu}' {num} PRIMARY KEY,
-                        '{p}' {num});'''\
+                        '{p}' {num} PRIMARY KEY,
+                        '{iu}' {num});'''\
                         .format(ptn=self.ptn, iu=self.inuse, p=self.port, num='INTEGER'))
                 #commit to database
                 self.commit_db()
