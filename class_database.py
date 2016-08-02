@@ -58,13 +58,32 @@ class class_database(object):
                 c.execute("INSERT OR REPLACE INTO '{ptn}' ('{p}', '{iu}') VALUES ('{pv}', '{iuv}');".\
                         format(ptn=self.ptn, p=self.port, iu=self.inuse, pv=port, iuv=1))
                 #Log class creation
-                self.log_class_creation(class_name+" - Instructor: "+instructor+" - Port: "+port)
+                self.log(" : added to database : "+class_name+" - Instructor: "+instructor+" - Port: "+port)
                 #commit info to database
                 self.commit_db()
 
-        def log_class_creation(self, string):
+        def remove_class(self, class_name, port):
+                #connect to database
+                self.get_connection()
+                c = self.conn.cursor()
+                #command string to delete from class table
+                sql = """
+                        DELETE FROM {ctn}
+                        WHERE {cn} = '{name}';
+                """.format(ctn=self.self.ctn, cn=self.class_name, name=class_name)
+                c.execute(sql)
+                #command string to set port use table
+                sql="INSERT OR REPLACE INTO '{ptn}' ('{iu}') VALUES ('{iuv}') WHERE {p} = '{pv}';".\
+                        format(ptn=self.ptn, iu=self.inuse, iuv=0, p=self.port, pv=port)
+                c.execute(sql)
+                #log this removal
+                self.log(" : removd from database : "+class_name+" : "+port+" is now free")
+                #Commit to database
+                self.commit_db()
+
+        def log(self, string):
                 with open("/data/log.txt", "a") as log:
-                        log.write(str(datetime.now())+" : added to database : "+string)
+                        log.write(str(datetime.now())++string)
 
         def commit_db(self):
                 """commit database changes in info and close the connection"""
