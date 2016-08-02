@@ -25,7 +25,7 @@ def create_class(args):
         container = cli.create_container(image='jupyterhub/actf:v'+args.version,
                         command='/bin/bash',
                         name=args.class_name, ports=[8000],
-                        host_config=cli.create_host_config(port_bindings={8000:80}),
+                        host_config=cli.create_host_config(port_bindings={8000:args.port}),
                         volumes= ['/home','/srv/cgrb'], stdin_open=True, detach=True)
 
         response = cli.start(container=container.get('Id'))
