@@ -10,7 +10,7 @@ def parse_args():
 		help = "Delete a docker container from database and docker daemon by name.\nFormat: python manage_class.py --delete_class <class_name>")
 	parser.add_argument('-a', '--add_extension', dest='extension',
 		help = "Add an ipython extension to Jupyterhub by name.\nFormat: python manage_class.py --add_extension <extension_name>")
-	return parser
+	return parser.parse_args()
 	
 def create_class(args):
 	info = {'class_name':args.class_info[0],
