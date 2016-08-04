@@ -50,6 +50,12 @@ def create_class(args):
 
         database_commit(args.port, args.class_name, args.user)
 
+def delete_class(name):
+    cli = Client(base_url='unix://var/run/docker.sock')
+    cli.stop(container=name)
+    cli.remove_container(container=name, v=False)
+
+
 def database_commit(port, class_name, instructor):
         db = data.class_database()
         db.insert_class(port, class_name, instructor)
