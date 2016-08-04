@@ -44,11 +44,11 @@ def create_class(args):
         response = cli.exec_start(create_user.get('Id'))
         print(response)
 
-        class_start = cli.exec_create(container=args.class_name, cmd = 'jupyterhub --no-ssl')
+        class_start = cli.exec_create(container=args['class_name'], cmd = 'jupyterhub --no-ssl')
         response = cli.exec_start(class_start.get('Id'), detach=True)
         print(response)
 
-        database_commit(args.port, args.class_name, args.user)
+        database_commit(args['port'], args['class_name'], args['user'])
 
 def delete_class(name):
     cli = Client(base_url='unix://var/run/docker.sock')
