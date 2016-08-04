@@ -62,6 +62,17 @@ class class_database(object):
                 #commit info to database
                 self.commit_db()
 
+        def get_class_names(self):
+                #connect to the database
+                self.get_connection()
+                c=self.conn.cursor()
+                #get class names
+                names = list()
+                for row in c.execute("SELECT {class_name} FROM {ctn};".\
+                        format(class_name=self.class_name, ctn=self.ctn)):
+                        names.append(row)
+                return names
+
         def remove_class(self, class_name, port):
                 #connect to database
                 self.get_connection()
@@ -77,12 +88,12 @@ class class_database(object):
                         format(ptn=self.ptn, iu=self.inuse, iuv=0, p=self.port, pv=port)
                 c.execute(sql)
                 #log this removal
-                self.log(" : removd from database : "+class_name+" : "+port+" is now free")
+                self.log(" : removed from database : "+class_name+" : "+port+" is now free")
                 #Commit to database
                 self.commit_db()
 
         def log(self, string):
-                with open("/data/log.txt", "a") as log:
+                with open("/var/docker/log.txt", "a") as log:
                         log.write(str(datetime.now())+string)
 
         def commit_db(self):
