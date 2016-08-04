@@ -25,7 +25,7 @@ def create_class(args):
         container = cli.create_container(image='jupyterhub/actf:v'+args['version'],
                         command='/bin/bash',
                         name=args['class_name'], ports=[8000],
-                        volumes= ['/home','/srv/cgrb', '/local/cluster']
+                        volumes= ['/home','/srv/cgrb', '/local/cluster'],
                         host_config=cli.create_host_config(port_bindings={8000:args['port']}, binds={
                                 '/local/cluster':{
                                         'bind': '/local/cluster',
