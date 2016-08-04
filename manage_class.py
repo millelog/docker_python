@@ -32,7 +32,7 @@ def main():
 	db = data.class_database()
 	#If trying to create class
 	if args.class_info:
-		if len(args.class_info == 7):
+		if len(args.class_info) == 7:
 			if all(create.valid_input(arg) for arg in args.class_info):
 				create_class(args)
 			else:
