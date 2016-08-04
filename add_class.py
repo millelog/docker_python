@@ -25,13 +25,22 @@ def create_class(args):
         container = cli.create_container(image='jupyterhub/actf:v'+args.version,
                         command='/bin/bash',
                         name=args.class_name, ports=[8000],
-                        host_config=cli.create_host_config(port_bindings={8000:args.port}),
-                        volumes= ['/home','/srv/cgrb'], stdin_open=True, detach=True)
+                        volumes= ['/home','/srv/cgrb', '/local/cluster']
+                        host_config=cli.create_host_config(port_bindings={8000:args.port}, binds={
+                                '/local/cluster':{
+                                        'bind': '/local/cluster',
+                                        'mode': 'ro',
+                                }
+                        }),
+                        stdin_open=True, detach=True)
 
         response = cli.start(container=container.get('Id'))
         print(response)
 
-        create_user = cli.exec_create(container=args.class_name, cmd = '/opt/anaconda/bin/python /home/jupyter_python/manage_users.py -a '+args.first+' '+args.last+' '+args.user+' '+args.email+' instructor True')
+        create_user = cli.exec_create(container=args.class_name, cmd =\
+         '/opt/anaconda/bin/python /home/jupyter_python/manage_users.py -a '+\
+        args.first+' '+args.last+' '+args.user+' '+args.email+' instructor True')
+        
         response = cli.exec_start(create_user.get('Id'))
         print(response)
 
@@ -62,8 +71,6 @@ def valid_parser(args):
            valid_input(args.user) and\
            valid_input(args.port) and\
            valid_input(args.version)
-
-
 
 def main():
         args = parse_args()
