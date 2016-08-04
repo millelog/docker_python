@@ -29,13 +29,14 @@ def main():
 	args = parse.args()
 	db = data.class_database()
 	#If trying to create class
-	if args.class_info and len(args.class_info == 7):
-		if all(create.valid_input(arg) for arg in args.class_info):
-			create_class(args)
+	if args.class_info:
+		if len(args.class_info == 7):
+			if all(create.valid_input(arg) for arg in args.class_info):
+				create_class(args)
+			else:
+				print("Invalid input, please only use valid characters.")
 		else:
-			print("Invalid input, please only use valid characters.")
-	else:
-		print("Invalid number of arguments.")
+			print("Invalid number of arguments.")
 	#if removing class
 	elif args.delete_class:
 		if delete_class in db.get_class_names():
@@ -44,3 +45,6 @@ def main():
 			print("Given class name is not in the database of active classes")
 	elif args.extension:
 		pass
+
+if __name__=='__main__':
+	main()
