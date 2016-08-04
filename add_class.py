@@ -38,7 +38,7 @@ def create_class(args):
         print(response)
 
         create_user = cli.exec_create(container=args['class_name'], cmd =\
-         '/opt/anaconda/bin/python /home/jupyter_python/manage_users.py -a '+\
+         '/opt/anaconda/bin/python /home/public/data/jupyter_python/manage_users.py -a '+\
         args['first']+' '+args['last']+' '+args['user']+' '+args['email']+' instructor True')
         
         response = cli.exec_start(create_user.get('Id'))
