@@ -3,7 +3,7 @@ import class_database as data
 import argparse
 
 def parse_args():
-	parser = argparse.ArgumentParser(desscription='Command line interface to manage dockerized jupyterhub classes.')
+	parser = argparse.ArgumentParser(description='Command line interface to manage dockerized jupyterhub classes.')
 	parser.add_argument('-c', '--create_class', dest='class_info', nargs='+',
 		help = "Create new Jupyterhub docker.\nFormat: python manage_class.py --create_class <class_name> <first> <last> <email> <username> <port> <version>")
 	parser.add_argument('-d', '--delete_class', dest='delete_class',
