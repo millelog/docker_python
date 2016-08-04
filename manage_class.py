@@ -26,7 +26,7 @@ def delete_class(args):
 
 def main():
 	#parse args and get database
-	args = parse.args()
+	args = parse_args()
 	db = data.class_database()
 	#If trying to create class
 	if args.class_info:
