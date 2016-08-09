@@ -32,7 +32,7 @@ def create_class(args):
         print(start_jupyterhub(cli, args['class_name']))
 
 def start_jupyterhub(cli, container_name):
-        class_start = cli.exec_create(container=args['class_name'], cmd = 'jupyterhub --no-ssl')
+        class_start = cli.exec_create(container=container_name, cmd = 'jupyterhub --no-ssl')
         return cli.exec_start(class_start.get('Id'), detach=True)
 
 def add_to_config(cli, container_name, config_line):
