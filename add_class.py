@@ -31,9 +31,6 @@ def create_class(args):
         #Run the command to start the server and print the response
         print(start_jupyterhub(cli, args['class_name'])
 
-        #Commit the class creation to database
-        database_commit(args['port'], args['class_name'], args['user'])
-
 def start_jupyterhub(cli, container_name):
         class_start = cli.exec_create(container=args['class_name'], cmd = 'jupyterhub --no-ssl')
         return(cli.exec_start(class_start.get('Id'), detach=True))
