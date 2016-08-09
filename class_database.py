@@ -70,7 +70,7 @@ class class_database(object):
                 names = list()
                 for row in c.execute("SELECT {class_name} FROM {ctn};".\
                         format(class_name=self.class_name, ctn=self.ctn)):
-                        names.append(row)
+                        names.append(row[0])
                 return names
 
         def remove_class(self, class_name):
