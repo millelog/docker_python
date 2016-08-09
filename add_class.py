@@ -38,7 +38,7 @@ def start_jupyterhub(cli, container_name):
 def add_to_config(cli, container_name, config_line):
         config_line = 'c.Application.base_url = \'/'+container_name+'/\''
         edit_config = cli.exec_create(container=container_name,
-                cmd = 'echo '+config_line+' >> /srv/jupyterhub_config.py')
+                cmd = 'echo '+config_line+' \>\> /srv/jupyterhub_config.py')
         return cli.exec_start(edit_config.get('Id'))
 
 
