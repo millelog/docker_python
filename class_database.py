@@ -98,8 +98,7 @@ class class_database(object):
                 self.get_connection()
                 c=self.conn.cursor()
                 ports=[]
-                for row in c.execute("SELECT {port} FROM {ptn} WHERE {iu} = {iuv}".\
-                        format(port=self.port, ptn=self.ptn, iu=self.inuse, iuv=0))
+                for row in c.execute("SELECT {port} FROM {ptn} WHERE {iu} = '{iuv}';".format(port=self.port, ptn=self.ptn, iu=self.inuse, iuv=0)):
                         ports.append(row[0])
                 return ports
 
