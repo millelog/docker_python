@@ -94,7 +94,7 @@ class class_database(object):
                 #Commit to database
                 self.commit_db()
         
-        def get_available_ports:
+        def get_available_ports(self):
                 self.get_connection()
                 c=self.conn.cursor()
                 ports=[]
