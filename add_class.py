@@ -29,7 +29,7 @@ def create_class(args):
         print(add_to_config(cli, args['class_name'], config_line)) 
 
         #Run the command to start the server and print the response
-        print(start_jupyterhub(cli, args['class_name'])
+        print(start_jupyterhub(cli, args['class_name']))
 
 def start_jupyterhub(cli, container_name):
         class_start = cli.exec_create(container=args['class_name'], cmd = 'jupyterhub --no-ssl')
