@@ -53,6 +53,15 @@ def delete_class(name):
     cli = Client(base_url='unix://var/run/docker.sock')
     cli.stop(container=name)
     cli.remove_container(container=name, v=False)
+    
+def valid_input(input_string):
+        valid_string = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@._ \''
+        for char in input_string:
+            if char not in valid_string:
+                return False
+        if not input_string:
+            return False
+        return True
 
 def main():
         print("Depreciated by manage_class.py")
