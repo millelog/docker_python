@@ -29,7 +29,7 @@ def create_class(args):
 
 def delete_class(args):
         create.delete_class(args.delete_class)
-`       data.remove_class(args.delete_class)
+        data.remove_class(args.delete_class)
 
 
 def main():
