@@ -22,7 +22,7 @@ def create_class(args):
         print(response)
 
         #Run the command and print the response returned, Creates initial user
-        print(create_instrucotr(cli, args))
+        print(create_instructor(cli, args))
 
         #Run the command to add a line to the jupytehrub config file and print response
         config_line = 'c.Application.base_url = \'/'+args['class_name']+'/\''
