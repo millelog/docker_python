@@ -57,11 +57,6 @@ def delete_class(name):
     cli.stop(container=name)
     cli.remove_container(container=name, v=False)
 
-
-def database_commit(port, class_name, instructor):
-        db = data.class_database()
-        db.insert_class(port, class_name, instructor)
-
 def main():
         print("Depreciated by manage_class.py")
 
