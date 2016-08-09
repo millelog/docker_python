@@ -1,24 +1,5 @@
 from docker import Client
 import class_database as data
-import argparse
-
-def parse_args():
-        parser = argparse.ArgumentParser(description='Create a new dockerized jupyterhub teaching interface')
-        parser.add_argument('-n', dest='class_name', required=True,
-                help = "Name of the class")
-        parser.add_argument('-f', dest='first', required=True,
-                help = "Instructor's first name")
-        parser.add_argument('-l', dest='last', required=True,
-                help = "Instrucotr's last name")
-        parser.add_argument('-e', dest='email', required=True,
-                help = "Instructor's email")
-        parser.add_argument('-u', dest='user', required=True,
-                help = "Instructor's username")
-        parser.add_argument('-p', dest='port', required=True,
-                help = "Host's port to map the docker to.")
-        parser.add_argument('-v', dest='version', required=True,
-                help="Version number of the jupyterhub/cgrb image.")
-        return parser.parse_args()
 
 def create_class(args):
         cli = Client(base_url='unix://var/run/docker.sock')
@@ -80,24 +61,6 @@ def delete_class(name):
 def database_commit(port, class_name, instructor):
         db = data.class_database()
         db.insert_class(port, class_name, instructor)
-
-def valid_input(input_string):
-        valid_string = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@._ \''
-        for char in input_string:
-            if char not in valid_string:
-                return False
-        if not input_string:
-            return False
-        return True
-
-def valid_parser(args):
-        return valid_input(args.class_name) and\
-           valid_input(args.first) and\
-           valid_input(args.last) and\
-           valid_input(args.email) and\
-           valid_input(args.user) and\
-           valid_input(args.port) and\
-           valid_input(args.version)
 
 def main():
         print("Depreciated by manage_class.py")
