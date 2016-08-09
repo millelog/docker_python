@@ -79,10 +79,8 @@ class class_database(object):
                 c = self.conn.cursor()
                 #Get port of class_name
                 sql = "SELECT {p} FROM {ctn} WHERE {cn} = '{name}';".format(p=self.port, ctn=self.ctn, cn=self.class_name, name=class_name)
-                #IDK WHY THIS WORKS I"M SORRY PLEASE FIX IF YOU KNOW SQLITE
-                port = None
-                for row in c.execute(sql)
-                        port = row[0]
+                # execute returns a tuple or something hopefully first index is right
+                port = c.execute(sql)[0]
                 print("Class name: "+class_name+"     Port: "+port)
                 #command string to delete from class table
                 sql = "DELETE FROM {ctn} WHERE {cn} = '{name}';".format(ctn=self.ctn, cn=self.class_name, name=class_name)
