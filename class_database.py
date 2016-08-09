@@ -73,15 +73,19 @@ class class_database(object):
                         names.append(row)
                 return names
 
-        def remove_class(self, class_name, port):
+        def remove_class(self, class_name):
                 #connect to database
                 self.get_connection()
                 c = self.conn.cursor()
+                #Get port of class_name
+                sql = "SELECT {p} FROM {ctn} WHERE {cn} = '{name}';".format(p=self.port, ctn=self.ctn, cn=self.class_name, name=class_name)
+                #IDK WHY THIS WORKS I"M SORRY PLEASE FIX IF YOU KNOW SQLITE
+                port = None
+                for row in c.execute(sql)
+                        port = row[0]
+                print("Class name: "+class_name+"     Port: "+port)
                 #command string to delete from class table
-                sql = """
-                        DELETE FROM {ctn}
-                        WHERE {cn} = '{name}';
-                """.format(ctn=self.self.ctn, cn=self.class_name, name=class_name)
+                sql = "DELETE FROM {ctn} WHERE {cn} = '{name}';".format(ctn=self.ctn, cn=self.class_name, name=class_name)
                 c.execute(sql)
                 #command string to set port use table
                 sql="INSERT OR REPLACE INTO '{ptn}' ('{iu}') VALUES ('{iuv}') WHERE {p} = '{pv}';".\
@@ -91,6 +95,15 @@ class class_database(object):
                 self.log(" : removed from database : "+class_name+" : "+port+" is now free")
                 #Commit to database
                 self.commit_db()
+        
+        def get_available_ports:
+                self.get_connection()
+                c=self.conn.cursor()
+                ports=[]
+                for row in c.execute("SELECT {port} FROM {ptn} WHERE {iu} = {iuv}".\
+                        format(port=self.port, ptn=self.ptn, iu=self.inuse, iuv=0))
+                        ports.append(row[0])
+                return ports
 
         def log(self, string):
                 with open("/var/docker/log.txt", "a") as log:
