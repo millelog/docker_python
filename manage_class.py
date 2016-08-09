@@ -15,6 +15,7 @@ def parse_args():
 
 
 def create_class(args):
+        db = data.class_database()
         info = {'class_name':args.class_info[0],
                 'first':args.class_info[1],
                 'last':args.class_info[2],
@@ -25,7 +26,7 @@ def create_class(args):
                 'mem_limit':args.class_info[7]
                 }
         create.create_class(info)
-        data.insert_class(info['port'], info['class_name'], info['user'])
+        db.insert_class(info['port'], info['class_name'], info['user'])
 
 def delete_class(args):
         create.delete_class(args.delete_class)
