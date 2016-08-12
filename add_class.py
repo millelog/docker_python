@@ -1,5 +1,6 @@
 from docker import Client
 import class_database as data
+import subprocess
 
 def create_class(args):
         cli = Client(base_url='unix://var/run/docker.sock')
@@ -7,15 +8,16 @@ def create_class(args):
         container = cli.create_container(image='jupyterhub/actf:'+args['version'],
                         command='/bin/bash',
                         name=args['class_name'], ports=[8000],
-                        volumes= ['/home','/srv/cgrb', '/local/cluster'],
+                        volumes= ['/home','/srv/cgrb'],
                         host_config=cli.create_host_config(
                                 port_bindings={8000:args['port']}, 
-                                binds={
-                                        '/local/cluster':{
-                                                'bind': '/local/cluster',
-                                                'mode': 'ro',
-                                        }
-                                }, mem_limit=args['mem_limit']
+                                #binds={
+                                 #       '/local/cluster':{
+                                  #              'bind': '/local/cluster',
+                                   #             'mode': 'ro',
+                                    #    }
+                                #}, 
+				mem_limit=args['mem_limit']
                         ), stdin_open=True, detach=True)
 
         response = cli.start(container=container.get('Id'))
@@ -31,14 +33,16 @@ def create_class(args):
         #Run the command to start the server and print the response
         print(start_jupyterhub(cli, args['class_name']))
 
+        #Add the path to the class to nginx configuration
+        add_nginx_config(args['host'], args['port'], args['class_name'])
+
 def start_jupyterhub(cli, container_name):
         class_start = cli.exec_create(container=container_name, cmd = 'jupyterhub --no-ssl')
         return cli.exec_start(class_start.get('Id'), detach=True)
 
 def add_to_config(cli, container_name, config_line):
-        config_line = 'c.Application.base_url = \'/'+container_name+'/\''
         edit_config = cli.exec_create(container=container_name,
-                cmd = 'echo '+config_line+' \>\> /srv/jupyterhub_config.py')
+                cmd = 'bash -exec \'echo c.Application.base_url = \\\"/%s/\\\" >> /srv/jupyterhub_config.py\'' % (container_name, ))
         return cli.exec_start(edit_config.get('Id'))
 
 
@@ -48,11 +52,35 @@ def create_instructor(cli, args):
         args['first']+' '+args['last']+' '+args['user']+' '+args['email']+' instructor True')
         return cli.exec_start(create_user.get('Id'))
 
+def add_nginx_config(host, port, class_name):
+
+    config_file="""location ~* /{class_name}(/.+)? {{
+        proxy_pass http://{host}:{port};
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host; # necessary
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-NginX-Proxy true;
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade; # necessary
+        proxy_set_header Connection $connection_upgrade; # necessary
+        proxy_read_timeout 86400;
+    }}""".format(class_name=class_name, host=host, port=port)
+
+    with open('/etc/nginx/conf.d/classes/{class_name}.conf'.format(class_name=class_name), 'w') as f:
+        f.write(config_file)
+
+
+
 
 def delete_class(name):
+    #delete the container
     cli = Client(base_url='unix://var/run/docker.sock')
     cli.stop(container=name)
     cli.remove_container(container=name, v=False)
+    #Delete the ngnix config file 
+    path = "/etc/nginx/conf.d/classes/{class_name}.conf".format(class_name=name)
+    subprocess.check_output(["rm", "-f", path])
     
 def valid_input(input_string):
         valid_string = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@._ \''
