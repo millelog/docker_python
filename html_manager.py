@@ -39,8 +39,6 @@ def write_html_tail():
                     width="270" height="53" /></a>
 
             </div>
-            <p>Configuration File: <tt>/etc/nginx/nginx.conf</tt></p>
-            <p>Default Index Location: <tt>/usr/share/nginx/html</tt></p>
         </div>
     </body>
 </html>'''
