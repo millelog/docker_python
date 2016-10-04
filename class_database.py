@@ -99,7 +99,11 @@ class class_database(object):
                                 'first': row[0].capitalize(),
                                 'last': row[1].capitalize(),
                                 'email': row[2],
+<<<<<<< HEAD
                                 'class_name': row[3]
+=======
+                                'class_name': row[3].title()
+>>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
                         }
                 return info
                  
@@ -132,9 +136,15 @@ class class_database(object):
                 sql = "SELECT {p} FROM {ctn} WHERE {cn} = \'{name}\';".\
                         format(p=self.port, ctn=self.ctn, cn=self.class_name, name=class_name)
 
+<<<<<<< HEAD
 		# execute returns a tuple of tuples, turn it into a list 
                 ports = c.execute(sql).fetchall()
 		#If no available ports
+=======
+                # execute returns a tuple of tuples, turn it into a list 
+                ports = c.execute(sql).fetchall()
+                #If no available ports
+>>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
                 if not ports:
                         log.log("There are no avaibale ports for "+class_name+" and the program quit without finishing")
                         exit(2)

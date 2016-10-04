@@ -6,6 +6,7 @@ def write_html_class(class_name, readable_name, instructor_first, instructor_las
     html = '''
 
             <div class="alert">
+<<<<<<< HEAD
                 <h2>{readable_name} with {first} {last} ({email})</h2>
                 <div class="content">
                     <div class='imagelinks'>
@@ -17,6 +18,19 @@ def write_html_class(class_name, readable_name, instructor_first, instructor_las
                             src='images/rstudio-logo.png'
                             alt=" R Studio "
                             width='115' height='40'/></a>
+=======
+                <h2>{readable_name}  -- {last}, {first}  -- Email: {email}</h2>
+                <div class="content">
+                    <div class='imagelinks'>
+                        <a href="http://jupyter.cgrb.oregonstate.edu/{class_name}/jupyter"><img
+                            src="images/jupyter-logo.png"
+                            alt=" Jupyter "
+                            width='270' height='65'/></a>
+                        <a href="http://jupyter.cgrb.oregonstate.edu/{class_name}/rstudio"><img
+                            src='images/rstudio-logo.png'
+                            alt=" R Studio "
+                            width='185' height='65'/></a>
+>>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
                     </div>
                 </div>
             </div>
@@ -32,7 +46,18 @@ def write_html_head():
     os.system(cmd)
 
 def write_html_tail():
+<<<<<<< HEAD
     tail='''        </div>
+=======
+    tail='''            <div class="logos">
+                <a href="cgrb.oregonstate.edu"><img
+                    src="images/cgrb-small-logo-transparent.png" 
+                    alt="[ Oregon State University ]"
+                    width="270" height="53" /></a>
+
+            </div>
+        </div>
+>>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
     </body>
 </html>'''
 
@@ -56,6 +81,9 @@ def update_html():
     #close all html things
     write_html_tail()
     print("Index.html has been updated to match the database of classes")
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
