@@ -30,17 +30,10 @@ def create_class(args, cli):
                                 security_opt=['seccomp=unconfined'],
                                 cap_add=["SYS_ADMIN"], 
                                 #Set resource limits for the container
-<<<<<<< HEAD
-				mem_limit=args['mem_limit']),
-                        environment=['container=docker'],
-                        cpu_shares=int(args['cpu_shares']),
-			stdin_open=True, detach=True) #These allow the container to continue to run in the background)<--this paranthesis man... first time a comments made a bug...
-=======
                                 mem_limit=args['mem_limit']),
                         environment=['container=docker'],
                         cpu_shares=int(args['cpu_shares']),
                         stdin_open=True, detach=True) #These allow the container to continue to run in the background)<--this paranthesis man... first time a comments made a bug...
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
 
         cli.start(container=container.get('Id'))
 
@@ -70,11 +63,7 @@ def create_class(args, cli):
         #Add the nginx configuration for r studio server
         r_config = get_nginx_r_config(args['host'], args['r_port'], args['class_name'])
 
-<<<<<<< HEAD
-	#Add the path to the class to nginx configuration
-=======
         #Add the path to the class to nginx configuration
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
         j_config = get_nginx_jupyter_config(args['host'], args['jupyter_port'], args['class_name'])
         
         #Update the config with these strings
@@ -88,34 +77,19 @@ def add_html_title(cli, container_name, readable_name):
         cli.exec_start(enter_title.get('Id'))
         cli.exec_start(cat_tail.get('Id'))
 
-<<<<<<< HEAD
-def copy_logo(cli, container_name):
-        copy-logo = cli.exec_create(container=container_name, cmd 
 
 def start_jupyterhub(cli, container_name):
-        class_start = cli.exec_create(container=container_name, cmd = 'jupyterhub --base-url='+container_name+'/jupyter -f \'/srv/jupyterhub_config.py\'')
-=======
-def start_jupyterhub(cli, container_name):
         class_start = cli.exec_create(container=container_name, cmd = 'jupyterhub --no-ssl --base-url='+container_name+'/jupyter -f \'/srv/jupyterhub_config.py\'')
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
         return cli.exec_start(class_start.get('Id'), detach=True)
 
 def start_rstudio(cli, container_name):
         r_start = cli.exec_create(container=container_name, cmd = '/usr/lib/rstudio-server/bin/rserver')
         return cli.exec_start(r_start.get('Id'), detach=True)
-<<<<<<< HEAD
 
 def start_ypbind(cli, container_name):
         ypbind = cli.exec_create(container=container_name, cmd = 'systemctl start ypbind')
         return cli.exec_start(ypbind.get('Id'))
 
-=======
-
-def start_ypbind(cli, container_name):
-        ypbind = cli.exec_create(container=container_name, cmd = 'systemctl start ypbind')
-        return cli.exec_start(ypbind.get('Id'))
-
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
 def add_base_url(cli, container_name):
     """add the line to the jupyterhub config that allows the nginx to route to the container correctly"""
     edit_config = cli.exec_create(container=container_name,
@@ -142,7 +116,6 @@ def create_instructor(cli, args):
 def write_nginx_config(class_name, jupyter, r_studio):
     with open('/etc/nginx/conf.d/classes/{class_name}.conf'.format(class_name=class_name), 'w') as f:
         f.write(r_studio+"\n\n\n"+jupyter);
-<<<<<<< HEAD
 
 def get_nginx_jupyter_config(host, port, class_name):
     """Add the relevant configuration details for this container to the nginx configuration directory"""
@@ -161,26 +134,6 @@ def get_nginx_jupyter_config(host, port, class_name):
 
     return config_file
 
-=======
-
-def get_nginx_jupyter_config(host, port, class_name):
-    """Add the relevant configuration details for this container to the nginx configuration directory"""
-    config_file="""location ~* /{class_name}/jupyter(/.+)? {{
-        proxy_pass http://{host}:{port};
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header Host $host; # necessary
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-NginX-Proxy true;
-        # WebSocket support
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade; # necessary
-        proxy_set_header Connection $connection_upgrade; # necessary
-        proxy_read_timeout 86400;
-    }}""".format(class_name=class_name, host=host, port=port)
-
-    return config_file
-
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
 def get_nginx_r_config(host, port, class_name):
     config_lines="""location /{class_name}/rstudio/ {{
         rewrite ^/{class_name}/rstudio/(.*)$ /$1 break;
@@ -194,11 +147,6 @@ def get_nginx_r_config(host, port, class_name):
     }}""".format(class_name=class_name, host=host, port=port)
 
     return config_lines
-<<<<<<< HEAD
-	
-=======
-
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
 
 def delete_class(name, cli):
     #delete the container

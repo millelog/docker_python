@@ -46,9 +46,6 @@ def write_html_head():
     os.system(cmd)
 
 def write_html_tail():
-<<<<<<< HEAD
-    tail='''        </div>
-=======
     tail='''            <div class="logos">
                 <a href="cgrb.oregonstate.edu"><img
                     src="images/cgrb-small-logo-transparent.png" 
@@ -57,7 +54,6 @@ def write_html_tail():
 
             </div>
         </div>
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
     </body>
 </html>'''
 
@@ -81,9 +77,3 @@ def update_html():
     #close all html things
     write_html_tail()
     print("Index.html has been updated to match the database of classes")
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d

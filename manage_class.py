@@ -9,15 +9,10 @@ import logger
 def parse_args():
         parser = argparse.ArgumentParser(description='Command line interface to manage dockerized jupyterhub classes.')
         parser.add_argument('-c', '--create_class', dest='class_info', nargs='+',
-<<<<<<< HEAD
                 help = "Create new Jupyterhub docker. Memory limit [number][unit], units = k, m or g, e.g. 20G. Number of weighted CPU shares, set to 1024 for default. class_name is the abbreviated name of the class with no spaces, readable name is the name of the class you want displayed and must be placed in quotes. version is either latest or v*.* \n Format: ./manage_class.py --create_class <class_name> \"<readable_name>\" <first> <last> <email> <username> <host> <version> <memory_limit> <cpu_shares>")
-=======
-                help = "Create new Jupyterhub docker. Memory limit [number][unit], units = k, m or g, e.g. 20G. Number of weighted CPU shares, set to 1024 for default. class_name is the abbreviated name of the class with no spaces, readable name is the name of the class you want displayed and must be placed in quotes. version is either latest or v*.* \n Format: python manage_class.py --create_class <class_name> \"<readable_name>\" <first> <last> <email> <username> <host> <version> <memory_limit> <cpu_shares>")
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
         parser.add_argument('-d', '--delete_class', dest='delete_class',
                 help = "Delete a docker container from database and docker daemon by name.\nFormat: ./manage_class.py --delete_class <class_name>")
         parser.add_argument('-a', '--add_extension', dest='extension',
-<<<<<<< HEAD
                 help = "Add an ipython extension to Jupyterhub by name.\nFormat: ./manage_class.py --add_extension <extension_name>")
         parser.add_argument('-n', '--add_host', dest='new_host',
         	help = "Add a new hostname to the database of available hosts and their ports.\nFormat: ./manage_class.py --add_host <host_name>")
@@ -25,15 +20,6 @@ def parse_args():
                 help = "Create a new Jupyter user. Group = instructor or student. \nFormat: ./manage_users.py --add_user <class_name> <first> <last> <USER> <email> <group>")
         parser.add_argument('-r', '--restart', dest='restart',
                 help = "Stop everything inside of a container and then restart all internal services properly. \nFormat: ./manage_users.py --restart <class_name>")
-=======
-                help = "Add an ipython extension to Jupyterhub by name.\nFormat: python manage_class.py --add_extension <extension_name>")
-        parser.add_argument('-n', '--add_host', dest='new_host',
-                help = "Add a new hostname to the database of available hosts and their ports.\nFormat: python manage_class.py --add_host <host_name>")
-        parser.add_argument('-u', '--add_user', dest='user_info', nargs='+',
-                help = "Create a new Jupyter user. Group = instructor or student. \nFormat: manage_users.py --add_user <class_name> <first> <last> <USER> <email> <group>")
-        parser.add_argument('-r', '--restart', dest='restart',
-                help = "Stop everything inside of a container and then restart all internal services properly. \nFormat: manage_users.py --restart <class_name>")
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
         return parser.parse_args()
 
 
@@ -47,19 +33,11 @@ def create_class(args, db, cli):
                 'user':args.class_info[5],
                 'host':args.class_info[6],
                 'jupyter_port':db.get_first_available_port(args.class_info[6]),
-<<<<<<< HEAD
-		'r_port':db.get_first_available_port(args.class_info[6]),
-                'version':args.class_info[7],
-                'mem_limit':args.class_info[8],
-                'cpu_shares':args.class_info[9]
-                }	
-=======
                 'r_port':db.get_first_available_port(args.class_info[6]),
                 'version':args.class_info[7],
                 'mem_limit':args.class_info[8],
                 'cpu_shares':args.class_info[9]
                 }
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
         create.create_class(info, cli)
         #Update the class database with the new class
         db.insert_class(info['host'], info['jupyter_port'], info['class_name'], info['readable_name'], info['user'], info['first'], info['last'], info['email'])
@@ -88,21 +66,12 @@ def delete_class(args, db, cli):
                 print("That class is not in the database")
         html_manager.update_html()
         print("Class "+args.delete_class+" was successfully deleted from the database and the docker container was removed.")
-<<<<<<< HEAD
-
-def create_user(user_info, cli):
-        command = 'python3 /home/public/data/jupyter_python/manage_users.py --add_user '+user_info[1]+' '+user_info[2]+' '+user_info[3]+' '+user_info[4]+' '+user_info[5]+' True'
-        create_user = cli.exec_create(container=user_info[0], cmd = command)
-        print(cli.exec_start(create_user.get('Id')))
-	
-=======
 
 def create_user(user_info, cli):
         command = 'python3 /home/public/data/jupyter_python/manage_users.py --add_user '+user_info[1]+' '+user_info[2]+' '+user_info[3]+' '+user_info[4]+' '+user_info[5]+' True'
         create_user = cli.exec_create(container=user_info[0], cmd = command)
         print(cli.exec_start(create_user.get('Id')))
 
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
 def restart_class(name, cli):
         cli.restart(container=name)
         create.start_jupyterhub(cli, name)
@@ -144,11 +113,7 @@ def main():
         elif args.new_host:
                 #TODO add valid format check?
                 add_host(args, db)
-<<<<<<< HEAD
-	#Add a user inside the designated docker container
-=======
         #Add a user inside the designated docker container
->>>>>>> 083ac187920a7733c37f36ae876abec2c223698d
         elif args.user_info:
                 if len(args.user_info) == 6:
                         if all(create.valid_input(arg) for arg in args.user_info):
