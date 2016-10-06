@@ -1,9 +1,13 @@
 from docker import Client
 import class_database as data
 import subprocess
-#check
+
+'''This file is used by the manage_class.py file to both create new docker containers and delete existing containers based off of the information gathered by manage_class.py.'''
 
 def create_class(args, cli): 
+        '''This is the main function of add_class.py and utilizes most of the other functions defined within it. 
+        This function uses the docker-py API to create a docker container based on the class information passed by args. 
+        It then executes a series of necessary configuration steps both inside and outside of the container.'''
         #Create a container that mounts the given volumes and ports and sets resource limits
         container = cli.create_container(image='jupyterhub/actf:'+args['version'],
                         #Default command of the container so that it will always have a process running
@@ -70,6 +74,7 @@ def create_class(args, cli):
         write_nginx_config(args['class_name'], j_config, r_config)
 
 def add_html_title(cli, container_name, readable_name):
+        '''Adds the name of the container to the html page template for Jupyter. Currently not functioning and is never called.'''
         cat_head = cli.exec_create(container=container_name, cmd = 'bash -exec \'cat /root/downloads/jupyter_config/page.html.head > /usr/share/jupyter/hub/templates/page.html\'')
         enter_title=cli.exec_create(container=container_name, cmd = 'bash -exec \'echo "  <h4 align=center>{container_name}</h4>" >> /usr/share/jupyter/hub/templates/page.html\''.format(container_name=readable_name))
         cat_tail = cli.exec_create(container=container_name, cmd = 'bash -exec \'cat /root/downloads/jupyter_config/page.html.tail >> /usr/share/jupyter/hub/templates/page.html\'')
@@ -79,14 +84,18 @@ def add_html_title(cli, container_name, readable_name):
 
 
 def start_jupyterhub(cli, container_name):
+        '''Starts the jupyterhub client within the docker with the command line flags to disable to the need for ssl, 
+        sets the base url of the jupyter server to match what nginx is expecting and forces the uploaded configuration file to be used.'''
         class_start = cli.exec_create(container=container_name, cmd = 'jupyterhub --no-ssl --base-url='+container_name+'/jupyter -f \'/srv/jupyterhub_config.py\'')
         return cli.exec_start(class_start.get('Id'), detach=True)
 
 def start_rstudio(cli, container_name):
+        '''Starts the rstudio server within the docker container by directly calling the rserver executable.'''
         r_start = cli.exec_create(container=container_name, cmd = '/usr/lib/rstudio-server/bin/rserver')
         return cli.exec_start(r_start.get('Id'), detach=True)
 
 def start_ypbind(cli, container_name):
+        '''Starts the ypbind service within the container so that the NIS users can be used as users within the container.'''
         ypbind = cli.exec_create(container=container_name, cmd = 'systemctl start ypbind')
         return cli.exec_start(ypbind.get('Id'))
 
@@ -97,23 +106,27 @@ def add_base_url(cli, container_name):
     return cli.exec_start(edit_config.get('Id'))
     
 def add_home_directory(cli, container_name):
+        '''Adds a line to the configuration file of jupyterhub within the container to set the location of the home directory to the corresponding class file on /ACTF.'''
         add_home = cli.exec_create(container=container_name,
             cmd='bash -exec \'echo c.Spawner.notebook_dir = \\\"/ACTF/{container_name}\\\" >> /srv/jupyterhub_config.py\''.format(container_name=container_name))
         return cli.exec_start(add_home.get('Id'))
 
 def add_group_whitelist(cli, container_name):
+        '''Adds users that belong to either the group with the name of the container or the cgrb group to jupyterhub’s authentication whitelist.'''
         add_group = cli.exec_create(container=container_name,
             cmd='bash -exec \'echo c.localAuthenticator.group_whitelist = set\(\\\"{container_name}\\\", \\\"cgrb\\\"\) >> /srv/jupyterhub.config.py\''.format(container_name=container_name))
         return cli.exec_start(add_group.get('Id'))
 
 def create_instructor(cli, args):
-    """Create the initial admin user of the container"""
+    '''Creates a user within the container by calling the manage_users.py script and passing it the information from arg parser. 
+    This function was deprecated by the addition of NIS users.'''
     create_user = cli.exec_create(container=args['class_name'], cmd =\
         '/opt/anaconda/bin/python /home/public/data/jupyter_python/manage_users.py -a '+\
     args['first']+' '+args['last']+' '+args['user']+' '+args['email']+' instructor True')
     return cli.exec_start(create_user.get('Id'))
 
 def write_nginx_config(class_name, jupyter, r_studio):
+    '''Creates a new nginx configuration file outside of the container and adds the necessary configuration as dictated by the jupyter and r_studio strings.'''
     with open('/etc/nginx/conf.d/classes/{class_name}.conf'.format(class_name=class_name), 'w') as f:
         f.write(r_studio+"\n\n\n"+jupyter);
 
@@ -135,6 +148,7 @@ def get_nginx_jupyter_config(host, port, class_name):
     return config_file
 
 def get_nginx_r_config(host, port, class_name):
+    '''Takes the networking information about the class and returns a string of valid nginx configuration settings for rstudio.'''
     config_lines="""location /{class_name}/rstudio/ {{
         rewrite ^/{class_name}/rstudio/(.*)$ /$1 break;
         proxy_pass http://{host}:{port};
@@ -149,6 +163,7 @@ def get_nginx_r_config(host, port, class_name):
     return config_lines
 
 def delete_class(name, cli):
+    '''Deletes the class container that matches the given name and removes all a associated configuration files from nginx as well.'''
     #delete the container
     cli.stop(container=name)
     cli.remove_container(container=name)
@@ -157,6 +172,8 @@ def delete_class(name, cli):
     subprocess.check_output(["rm", "-f", path])
     
 def valid_input(input_string):
+    '''Determines if the given input_string is of a valid format to be accepted as input for a new class or user.
+    A valid format means it only contains letters, numbers, @s, periods, underscores, spaces or apostrophes.'''
     valid_string = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@._ \''
     for char in input_string:
         if char not in valid_string:

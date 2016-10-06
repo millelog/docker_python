@@ -5,9 +5,13 @@ import os
 import logger as log
 
 
-class class_database(object):
-        """This class will do all read and writes to the class database"""
+class class_database(object):i
+        """This is the class definition for the database object that is used to manage and keep track of the containers created by these scripts.
+        This database uses sqlite3 and contains two tables. The first table holds all of the information that was given at the time of a containers creation. 
+        The second table holds the port information about the machines that are hosting these containers and keeps track of which host has available ports for when a new container is to be created."""
         def __init__(self):
+                """Sets the path to the database as /data/cgrb/database.sqlite and defines the names of some of the columns. 
+                The constructor then creates both a port table and a class table if they have not yet been created."""
                 #Variables that refer to columns and names of the database to lower the chance of spelling errors
                 self.db_path = "/data/cgrb/database.sqlite"
                 self.ctn = 'classes'
@@ -22,7 +26,7 @@ class class_database(object):
                 
 
         def get_connection(self):
-                """try a connection to the database path"""
+                """Attempts to connect to the database at the given path in order to open a line for its mutation. """
                 try:
                         self.conn = sqlite3.connect(self.db_path)
                 except sqlite3.Error:
@@ -31,6 +35,8 @@ class class_database(object):
                 return self.conn.cursor()
 
         def create_class_table(self):
+                """If the table does not exist it creates a new table with the name classes. This table has columns host, port, class_name, readable_name, instructor, first, last, email. 
+                The host and port columns are foreign keys from the the port table."""
                 c = self.get_connection()
                 c.execute("PRAGMA foreign_keys = ON;")
                 #Create the table with the proper initial columns
@@ -50,6 +56,7 @@ class class_database(object):
                 self.commit_db()
 
         def populate_port_table(self, hv):
+                """Adds a 100 new lines to the port table for the ports 8001-8101 under the given hostname."""
                 c = self.get_connection()
                 #Add 100 ports as not in use for the given host name
                 for i in range(8001, 8101):
@@ -59,6 +66,8 @@ class class_database(object):
                 self.commit_db()
 
         def create_port_table(self):
+                """If the port table does not exist then create it. The port table will have the columns host, port and in use. 
+                Host and port are both defined as primary keys and therefore there can never be two of the same port on the same host in this table."""
                 #connect to database
                 c = self.get_connection()
                 #create the port table
@@ -73,6 +82,8 @@ class class_database(object):
                 self.commit_db()
 
         def insert_class(self, host, port, class_name, readable_name, instructor, first, last, email):
+                """Inserts a new line into the class database with the given information or updates the line if there is already an entry with the given class name. 
+                The port table is then also updated to reflect the given combination of host and port to be in use."""
                 #connect to database
                 c=self.get_connection()
                 sql = "INSERT OR REPLACE INTO {ctn} VALUES ('{hv}', '{pv}', '{cnv}', '{rnv}', '{iv}', '{fv}', '{lv}', '{ev}');".\
@@ -88,7 +99,7 @@ class class_database(object):
                 self.commit_db()
         
         def get_instructor_info(self, class_name):
-                '''Returns a dict of the isntructors first, last and email'''
+                """Get’s the information about the instructor of a class given the class name. This information is then used to update the html for the main landing page when a new class is created."""
                 c = self.get_connection()
                 #Define the dictionaries
                 info = {'first': '', 'last': '', 'email': ''}
@@ -105,6 +116,7 @@ class class_database(object):
                  
 
         def get_class_names(self):
+                """Returns a list of all the class names that are currently in the classes table."""
                 #connect to the database
                 c = self.get_connection()
                 #get class names
@@ -115,17 +127,20 @@ class class_database(object):
                 return names
 
         def get_unique_hosts(self):
+                """Returns a list of all the unique hostnames currently in the port table."""
                 c=self.get_connection()
                 hosts = [None]
                 #For all the lines in the ports database
                 for row in c.execute("SELECT {host} FROM {ptn};".\
                         format(host='host', ptn=self.ptn)):
                         #Unique part
-                        if not row[0].rstrip() == hosts[0]:
+                        if not row[0].rstrip() == host for host in hosts:
                                 hosts.append(row[0].rstrip())
                 return hosts
 
         def remove_class(self, class_name):
+                """Frees all of the ports that are currently in use by the given class name and the deletes the row under that name from the class table."""
+
                 #connect to database
                 c=self.get_connection()
                 #Get port of class_name
@@ -160,12 +175,14 @@ class class_database(object):
                 self.commit_db()
 
         def print_ports(self):
+                """Print all of the ports in the port table to stdout"""
                 c = self.get_connection()
                 sql = "SELECT {p}, * FROM {ptn} ORDER BY {p};".format(p=self.port, ptn=self.ptn)
                 for row in c.exvimecute(sql):
                         print(row)
 
         def print_classes(self):
+                """    Print all of the classes in the class table and their associated information to stdout."""
                 c = self.get_connection()
                 sql = "SELECT {c}, * FROM {ctn} ORDER BY {c}".format(c=self.class_name, ctn=self.ctn)
                 for row in c.execute(sql):
@@ -173,6 +190,7 @@ class class_database(object):
 
         
         def get_available_ports(self, host):
+                """Returns a list of all of the available ports on the given host."""
                 c=self.get_connection()
                 ports=[]
                 #Select ports of the given host name that are not in use
@@ -187,6 +205,7 @@ class class_database(object):
                 return ports
 
         def get_first_available_port(self, host):
+                """Return the first result from the available ports on the given host"""
                 return self.get_available_ports(host)[0]
 
         

@@ -3,6 +3,8 @@ import class_database
 
 
 def write_html_class(class_name, readable_name, instructor_first, instructor_last, instructor_email):
+    """Creates a string of html that contains the class information that is passed to this function. 
+    This html string is then written to the index.html of the main landing page to append the current list of classes there"""
     html = '''
 
             <div class="alert">
@@ -42,10 +44,12 @@ def write_html_class(class_name, readable_name, instructor_first, instructor_las
 
 
 def write_html_head():
+    """A function that copies all of the html before the list of classes back into the index.html when it is updated by this module."""
     cmd='cat /usr/share/nginx/html/index.head > /usr/share/nginx/html/index.html'
     os.system(cmd)
 
 def write_html_tail():
+    """Contains a hardcoded string of html that is meant to create the final logo at the bottom of the page and wrap up the html tags."""
     tail='''            <div class="logos">
                 <a href="cgrb.oregonstate.edu"><img
                     src="images/cgrb-small-logo-transparent.png" 
@@ -62,6 +66,8 @@ def write_html_tail():
        f.write(tail)
 
 def update_html():
+    """Updates nginx’s index.html so that the class list on the webpage accurately reflects what the actual class list in the database is. 
+    This is called everytime a container is created or destroyed by manage_class.py."""
     #Connect to database
     db = class_database.class_database()
     #Get the class names in the database
