@@ -5,10 +5,10 @@ import os
 import logger as log
 
 
-class class_database(object):i
-        """This is the class definition for the database object that is used to manage and keep track of the containers created by these scripts.
-        This database uses sqlite3 and contains two tables. The first table holds all of the information that was given at the time of a containers creation. 
-        The second table holds the port information about the machines that are hosting these containers and keeps track of which host has available ports for when a new container is to be created."""
+class class_database(object):
+        '''This is the class definition for the database object that is used to manage and keep track of the containers created by these scripts.
+            This database uses sqlite3 and contains two tables. The first table holds all of the information that was given at the time of a containers creation. 
+            The second table holds the port information about the machines that are hosting these containers and keeps track of which host has available ports for when a new container is to be created.'''
         def __init__(self):
                 """Sets the path to the database as /data/cgrb/database.sqlite and defines the names of some of the columns. 
                 The constructor then creates both a port table and a class table if they have not yet been created."""
@@ -134,7 +134,7 @@ class class_database(object):i
                 for row in c.execute("SELECT {host} FROM {ptn};".\
                         format(host='host', ptn=self.ptn)):
                         #Unique part
-                        if not row[0].rstrip() == host for host in hosts:
+                        if not all(row[0].rstrip() == host for host in hosts):
                                 hosts.append(row[0].rstrip())
                 return hosts
 
@@ -182,7 +182,7 @@ class class_database(object):i
                         print(row)
 
         def print_classes(self):
-                """    Print all of the classes in the class table and their associated information to stdout."""
+                """Print all of the classes in the class table and their associated information to stdout."""
                 c = self.get_connection()
                 sql = "SELECT {c}, * FROM {ctn} ORDER BY {c}".format(c=self.class_name, ctn=self.ctn)
                 for row in c.execute(sql):
