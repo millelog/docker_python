@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+'''This is the main file that is meant to interface with the user. Through it you can create new docker containers, 
+delete or restart an existing container, and add a new host machine to the host/port database.'''
 import add_class as create
 import class_database as data
 import argparse
@@ -6,8 +8,6 @@ from docker import Client
 import html_manager
 import logger
 
-'''This is the main file that is meant to interface with the user. Through it you can create new docker containers, 
-delete or restart an existing container, and add a new host machine to the host/port database.'''
 
 def parse_args():
         '''Set up all of the possible options for argparse, including how to take their input from the command line and the info to display the main help message.'''

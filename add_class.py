@@ -1,8 +1,8 @@
+'''This file is used by the manage_class.py file to both create new docker containers and delete existing containers based off of the information gathered by manage_class.py.'''
 from docker import Client
 import class_database as data
 import subprocess
 
-'''This file is used by the manage_class.py file to both create new docker containers and delete existing containers based off of the information gathered by manage_class.py.'''
 
 def create_class(args, cli): 
         '''This is the main function of add_class.py and utilizes most of the other functions defined within it. 
