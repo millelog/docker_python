@@ -104,13 +104,14 @@ class class_database(object):
                 #Define the dictionaries
                 info = {'first': '', 'last': '', 'email': ''}
                 #Returns a tuple of the columns notated where class name is the same as the parameter
-                for row in c.execute("SELECT {first}, {last}, {email}, {rname} FROM {ctn} WHERE {cn} = \'{class_name}\';".\
+                for row in c.execute("SELECT {first}, {last}, {email}, {cn}, {rname} FROM {ctn} WHERE {cn} = \'{class_name}\';".\
                         format(first='first', last='last', email='email', rname='readable_name', ctn=self.ctn, cn= self.class_name, class_name=class_name)):
                         info = {
                                 'first': row[0].capitalize(),
                                 'last': row[1].capitalize(),
                                 'email': row[2],
-                                'class_name': row[3].title()
+                                'class_name': row[3],
+                                'readable_name': row[4].title()
                         }
                 return info
                  
@@ -120,11 +121,12 @@ class class_database(object):
                 #connect to the database
                 c = self.get_connection()
                 #get class names
-                names = list()
-                for row in c.execute("SELECT {class_name} FROM {ctn};".\
-                        format(class_name=self.class_name, ctn=self.ctn)):
-                        names.append(row[0].rstrip())
-                return names
+                names = {'name': list(), 'readable':list()};
+                for row in c.execute("SELECT {class_name}, {readable_name} FROM {ctn};".\
+                        format(class_name=self.class_name, readable_name='readable_name', ctn=self.ctn)):
+                        names['name'].append(row[0].rstrip());
+                        names['readable'].append(row[1].rstrip());
+                return names;
 
         def get_unique_hosts(self):
                 """Returns a list of all the unique hostnames currently in the port table."""

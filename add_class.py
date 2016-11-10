@@ -13,21 +13,21 @@ def create_class(args, cli):
                         #Default command of the container so that it will always have a process running
                         command='/usr/sbin/init',
                         #name of the container and the ports to forward to the host's ports
-                        name=args['class_name'], ports=[8000, 8787],
+                        name=args['class_name'], ports=[8000, 8080, 8787],
                         #Hostname for command line aesthetics
                         hostname=args['class_name']+'_host',
                         #Directories to store outside of the container in case of container failure
                         volumes= ['/home','/srv/cgrb', '/local/cluster', '/ACTF', '/etc/yp.conf', '/etc/sysconfig/network', '/etc/nsswitch.conf', '/sys/fs/cgroup'],
                         host_config=cli.create_host_config(
                                 #Bind the container's 8000 port to the variable host port based on availability
-                                port_bindings={8000:int(args['jupyter_port']), 8787:int(args['r_port'])}, 
+                                port_bindings={8000:int(args['jupyter_port']), 8080:int(args['docu_port']), 8787:int(args['r_port'])}, 
                                 #Mount the nfs1 and local cluster for access to its bin
                                 binds=[
                                         '/local/cluster:/local/cluster:ro',
                                         '/ACTF:/ACTF:rw',
                                         '/etc/yp.conf:/etc/yp.conf:ro',
                                         '/etc/sysconfig/network:/etc/sysconfig/network:ro',
-                                        '/etc/nsswitch.conf:/etcnsswitch.conf:ro',
+                                        '/etc/nsswitch.conf:/etc/nsswitch.conf:ro',
                                         '/sys/fs/cgroup:/sys/fs/cgroup:ro'
                                 ],
                                 #NIS secruity options

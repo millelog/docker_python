@@ -7,6 +7,7 @@ import argparse
 from docker import Client
 import html_manager
 import logger
+import subprocess
 
 
 def parse_args():
@@ -61,16 +62,18 @@ def create_class(args, db, cli):
                 'host':args.hostname,
                 'jupyter_port':db.get_first_available_port(args.hostname),
                 'r_port':db.get_first_available_port(args.hostname),
+                'docu_port':db.get_first_available_port(args.hostname),
                 'version':args.version,
                 'mem_limit':args.mem_limit,
-                'cpu_shares':args.cpu_shares
+                'cpu_shares':args.cpu_share
                 }
         if(all(create.valid_input(arg) for arg in info)):
                 create.create_class(info, cli)
                 #Update the class database with the new class
                 db.insert_class(info['host'], info['jupyter_port'], info['class_name'], info['readable_name'], info['user'], info['first'], info['last'], info['email'])
-                #Update the index.html for nginx with this new database
-                html_manager.update_html()
+                #Update the json objects that the front end uses to populate its dynamic content from the database
+                html_manager.update_json()
+                html_manager.update_class_info();
                 #start/restart nginx
                 try:
                         create.subprocess.check_output(['service', 'nginx', 'restart'])
@@ -97,7 +100,9 @@ def delete_class(args, db, cli):
                 db.remove_class(args.delete_class)
         except:
                 print("That class is not in the database")
-        html_manager.update_html()
+        html_manager.update_json()
+        html_manager.update_class_info()
+        subprocess.check_output("docker rm -f "+args.delete_class, stderr=subprocess.STDOUT, shell=True)
         print("Class "+args.delete_class+" was successfully deleted from the database and the docker container was removed.")
 
 def create_user(user_info, cli):
@@ -122,7 +127,7 @@ def main():
         db = data.class_database()
         cli = Client(base_url='unix://var/run/docker.sock')
         #If trying to create class
-        if args.class_name:
+        if hasattr(args, 'class_name'):
                 #If the host exists in the ports table
                 if args.hostname in db.get_unique_hosts():
                         create_class(args, db, cli)
@@ -132,7 +137,7 @@ def main():
         elif args.delete_class:
                 #I hate using these types of variables, wtb python lessons
                 found = False
-                for name in db.get_class_names():
+                for name in db.get_class_names()['name']:
                         if name == args.delete_class:
                                 delete_class(args, db, cli)
                                 found = True
