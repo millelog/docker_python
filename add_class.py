@@ -9,7 +9,7 @@ def create_class(args, cli):
         This function uses the docker-py API to create a docker container based on the class information passed by args. 
         It then executes a series of necessary configuration steps both inside and outside of the container.'''
         #Create a container that mounts the given volumes and ports and sets resource limits
-        container = cli.create_container(image='jupyterhub/actf:'+args['version'],
+        container = cli.create_container(image='cgrb/actf:'+args['version'],
                         #Default command of the container so that it will always have a process running
                         command='/usr/sbin/init',
                         #name of the container and the ports to forward to the host's ports

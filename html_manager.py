@@ -10,7 +10,7 @@ def update_json():
     #Get the class names in the database
     classes = db.get_class_names()
     #add each class to this page
-    with open('/usr/share/nginx/html/class_list.json', 'w') as outfile:
+    with open('/usr/share/nginx/html/public/class_list.json', 'w') as outfile:
         json.dump(classes, outfile);
     #close all html things
     print("Index.html has been updated to match the database of classes")
@@ -27,3 +27,4 @@ def update_class_info():
     with open('/usr/share/nginx/html/class_info.json', 'w') as outfile:
         json.dump(classes, outfile);
     print("class_info.json has been update");
+

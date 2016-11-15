@@ -74,10 +74,12 @@ def create_class(args, db, cli):
                 #Update the json objects that the front end uses to populate its dynamic content from the database
                 html_manager.update_json()
                 html_manager.update_class_info();
-                #start/restart nginx
+                #start/restart nginx and the express server
                 try:
+                        create.subprocess.check_output(['pm2', 'restart', 'class_server'])
                         create.subprocess.check_output(['service', 'nginx', 'restart'])
                 except:
+                        create.subprocess.check_output(['pm2', 'start', 'class_server'])
                         create.subprocess.check_output(['service','nginx', 'start'])
                 print("inserted into db")
         else:
@@ -102,7 +104,11 @@ def delete_class(args, db, cli):
                 print("That class is not in the database")
         html_manager.update_json()
         html_manager.update_class_info()
-        subprocess.check_output("docker rm -f "+args.delete_class, stderr=subprocess.STDOUT, shell=True)
+        subprocess.check_output("pm2 restart class_server", stderr=subprocess.STDOUT, shell=True);
+        try:
+            subprocess.check_output("docker rm -f "+args.delete_class, stderr=subprocess.STDOUT, shell=True)
+        except:
+            print("Container has already been deleted.");
         print("Class "+args.delete_class+" was successfully deleted from the database and the docker container was removed.")
 
 def create_user(user_info, cli):
